@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="fr">
 <head>
@@ -59,7 +60,7 @@
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.05);font-weight:700;color:#000}
     .copy-ok{background:rgba(0,0,0,0.45);padding:8px;border-radius:8px;position:fixed;right:18px;bottom:18px;color:#fff;display:none}
 
-    .bg-shape{position:fixed;right:-120px;top:-120px;width:420px;height:420px;border-radius:40%;filter:blur(60px);opacity:0.18;background:linear-gradient(45deg,var(--accent),var(--accent-2));transform:rotate(25deg);z-index:0}
+    .bg-shape{position:fixed;right:-120px;top:-120px;width:420px;height:420px;border-radius:40%;filter:blur(60px);opacity:0.18;background:linear-gradient(45deg,var(--accent),var(--accent-2));transform:rotate(15deg);}
 
     .petals span{position:absolute;top:-10%;width:12px;height:12px;background:#f7d9e3;border-radius:70% 30% 70% 30%;opacity:0.8;animation:fall 8s linear infinite}
     @keyframes fall{0%{transform:translateY(-10%) rotate(0deg)}100%{transform:translateY(110vh) rotate(360deg)}}
@@ -69,11 +70,11 @@
   </style>
 </head>
 <body>
-  <div class="bg-shape"></div>
+  <div class="bg-shape" aria-hidden="true"></div>
   <div class="container">
     <header>
       <div class="brand">
-        <div class="logo emoji-box">🌸</div>
+        <div class="logo emoji-box" aria-hidden="true">🌸</div>
         <div>
           <h1>🌸{𝐿𝑒 𝒫𝒶𝓇𝒶𝒹𝒾𝓈 𝒹𝑒𝓈 𝒸𝑒𝓇𝒾𝓈𝒾𝑒𝓇𝓈}🌸</h1>
           <div class="muted">Communauté • Événements • Jeux</div>
@@ -92,8 +93,8 @@
         <p>Un lieu chaleureux pour se retrouver, jouer, organiser des événements et discuter de tout.</p>
 
         <div class="invite-row">
-          <button class="btn btn-invite" id="copyInvite">Rejoindre le serveur</button>
-          <a class="btn btn-join" href="https://discord.gg/YxyFDPCKWp" id="openInvite" target="_blank">Ouvrir l'invitation</a>
+          <button class="btn btn-invite" id="copyInvite" aria-label="Copier et ouvrir l'invitation">Rejoindre le serveur</button>
+          <a class="btn btn-join" href="https://discord.gg/YxyFDPCKWp" id="openInvite" target="_blank" rel="noopener noreferrer">Ouvrir l'invitation</a>
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
@@ -106,7 +107,7 @@
       <aside>
         <div class="panel">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-            <div class="emoji-box" style="width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;">🌸</div>
+            <div class="emoji-box" style="width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;" aria-hidden="true">🌸</div>
             <div>
               <strong>🌸{𝐿𝑒 𝒫𝒶𝓇𝒶𝒹𝒾𝓈 𝒹𝑒𝓈 𝒸𝑒𝓇𝒾𝓈𝒾𝑒𝓇𝓈}🌸</strong>
               <div class="muted">Serveur communautaire</div>
@@ -118,32 +119,74 @@
       </aside>
     </section>
 
+    <footer>
+      <div class="muted">© <span id="year"></span> 🌸{Le Paradis des cerisiers} — Tous droits réservés</div>
+    </footer>
   </div>
 
+  <!-- input caché pour la copie (fallback) -->
+  <input id="inviteInput" type="text" value="https://discord.gg/YxyFDPCKWp" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="true" />
+
+  <!-- notification copie -->
+  <div id="copyOk" class="copy-ok" role="status" aria-live="polite">Lien copié !</div>
+
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Défensif : vérifie que l'élément existe avant de l'utiliser
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    function showCopy(){const el=document.getElementById('copyOk');el.style.display='block';setTimeout(()=>el.style.display='none',1800)}
+    function showCopy(){
+      const el = document.getElementById('copyOk');
+      if (!el) return;
+      el.style.display = 'block';
+      setTimeout(()=>el.style.display='none',1800);
+    }
 
+    // copyBtn (si présent) — garde pour compatibilité
     document.getElementById('copyBtn')?.addEventListener('click', async ()=>{
-      const input=document.getElementById('inviteInput');
-      try{await navigator.clipboard.writeText(input.value);showCopy();}catch(e){alert('Copie impossible');}
+      const input = document.getElementById('inviteInput');
+      if (!input) { alert('Aucun lien à copier'); return; }
+      try { await navigator.clipboard.writeText(input.value); showCopy(); } catch(e){ alert('Copie impossible'); }
     });
 
+    // Bouton principal : copie + ouvre (avec fallback)
     document.getElementById('copyInvite')?.addEventListener('click', async ()=>{
-      const link=document.getElementById('inviteInput').value;
-      try{await navigator.clipboard.writeText(link);showCopy();window.open(link,'_blank');}catch(e){window.open(link,'_blank');}
+      const inviteInput = document.getElementById('inviteInput');
+      const openInvite = document.getElementById('openInvite');
+      const link = (inviteInput && inviteInput.value) || (openInvite && openInvite.href);
+      if (!link) { alert('Aucun lien d\'invitation disponible'); return; }
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(link);
+          showCopy();
+        }
+      } catch (e) {
+        // si la copie échoue, on continue et ouvre le lien
+        console.warn('Échec copie dans le presse-papiers', e);
+      } finally {
+        // on ouvre le lien en dernier recours
+        try { window.open(link, '_blank', 'noopener'); } catch(e){ /* noop */ }
+      }
     });
 
     async function loadDiscordStats() {
-      const res = await fetch("https://discord.com/api/guilds/1190398760946241536/widget.json");
-      const data = await res.json();
-      document.getElementById("onlineCount").textContent = data.presence_count;
+      try {
+        const res = await fetch("https://discord.com/api/guilds/1190398760946241536/widget.json");
+        if (!res.ok) throw new Error('Widget non disponible');
+        const data = await res.json();
+        const el = document.getElementById("onlineCount");
+        if (el) el.textContent = typeof data.presence_count !== 'undefined' ? data.presence_count : '—';
+      } catch (e) {
+        const el = document.getElementById("onlineCount");
+        if (el) el.textContent = '—';
+        console.warn('Impossible de charger les stats Discord:', e);
+      }
     }
     loadDiscordStats();
   </script>
 
-  <div class="petals">
+  <div class="petals" aria-hidden="true">
     <span style="left:10%;animation-delay:0s"></span>
     <span style="left:25%;animation-delay:2s"></span>
     <span style="left:40%;animation-delay:4s"></span>
@@ -153,3 +196,4 @@
   </div>
 </body>
 </html>
+```
