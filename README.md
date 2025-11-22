@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="fr">
 <head>
@@ -34,7 +33,7 @@
     nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-weight:600}
 
     .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;margin-top:18px}
-    .hero-card{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);padding:28px;border-radius:14px;backdrop-filter:blur(6px);box-shadow:0 6px 30px rgba(0,0,0,0.6)}
+    .hero-card{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);padding:28px;border-radius:14px;backdrop-filter:blur(6px);box-shadow:0 6px 30px rgba(0,0,0,0.06)}
     .hero h2{margin:0 0 12px;font-size:28px}
     .hero p{color:var(--muted);line-height:1.5}
     .invite-row{display:flex;gap:12px;margin-top:18px}
@@ -60,8 +59,7 @@
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.05);font-weight:700;color:#000}
     .copy-ok{background:rgba(0,0,0,0.45);padding:8px;border-radius:8px;position:fixed;right:18px;bottom:18px;color:#fff;display:none}
 
-    .bg-shape{position:fixed;right:-120px;top:-120px;width:420px;height:420px;border-radius:40%;filter:blur(60px);opacity:0.18;background:linear-gradient(45deg,var(--accent),var(--accent-2));transform:rotate(15deg);}
-
+    .bg-shape{position:fixed;right:-120px;top:-120px;width:420px;height:420px;border-radius:40%;filter:blur(60px);opacity:0.18;background:linear-gradient(45deg,var(--accent),var(--accent-2));transform:rotate(20deg)}
     .petals span{position:absolute;top:-10%;width:12px;height:12px;background:#f7d9e3;border-radius:70% 30% 70% 30%;opacity:0.8;animation:fall 8s linear infinite}
     @keyframes fall{0%{transform:translateY(-10%) rotate(0deg)}100%{transform:translateY(110vh) rotate(360deg)}}
     .petals span:nth-child(odd){animation-duration:10s}
@@ -196,4 +194,3 @@
   </div>
 </body>
 </html>
-```
